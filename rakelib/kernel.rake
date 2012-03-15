@@ -202,7 +202,8 @@ BUILD_CONFIG[:version_list].each do |ver|
 
   [ compiler_signature,
     "kernel/alpha.rb",
-    "kernel/loader.rb"
+    "kernel/loader.rb",
+    "kernel/embed_loader.rb"
   ].each do |name|
     kernel_file_task runtime, compiler_signature, ver, name
   end
