@@ -257,11 +257,16 @@ Daedalus.blueprint do |i|
   files << oniguruma
   files << ltm
 
-  cli = files.dup
-  cli << i.source_file("vm/drivers/cli.cpp")
+  i.shared_library "vm/#{Rubinius::BUILD_CONFIG[:shared_lib_name]}", *files.dup
+  i.static_library "vm/#{Rubinius::BUILD_CONFIG[:static_lib_name]}", *files.dup
+
+  cli = i.source_file("vm/drivers/cli.cpp")
+
+  exe_files = files.dup
+  exe_files << cli
 
   exe = RUBY_PLATFORM =~ /mingw|mswin/ ? 'vm/vm.exe' : 'vm/vm'
-  i.program exe, *cli
+  i.program exe, *exe_files
 
   test_files = files.dup
   test_files << i.source_file("vm/test/runner.cpp") { |f|

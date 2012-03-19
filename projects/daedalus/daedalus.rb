@@ -63,6 +63,7 @@ module Daedalus
     end
 
     def command(cmd)
+      verbose cmd
       system cmd
       if $?.exitstatus != 0
         STDOUT.puts "Error: #{cmd}"
@@ -212,7 +213,7 @@ module Daedalus
       when /darwin/
         # on Unix we need a g++ link, not gcc.
         # Ff line contributed by Daniel Harple.
-        @ldshared = "#{@linker} -bundle -undefined suppress -flat_namespace -lstdc++"
+        @ldshared = "#{@linker} -shared -undefined suppress -flat_namespace -lstdc++"
 
       when /aix/
         @ldshared = "#{@linker} -shared -Wl,-G -Wl,-brtl"
@@ -818,6 +819,20 @@ module Daedalus
     end
   end
 
+  class SharedLibTarget < Program
+    def build(ctx)
+      ctx.log.inc!
+      ctx.ldshared @path, objects
+    end
+  end
+
+  class StaticLibTarget < Program
+    def build(ctx)
+      ctx.log.inc!
+      ctx.ar @path, objects
+    end
+  end
+
   class Tasks
     def initialize
       @pre = []
@@ -957,6 +972,18 @@ module Daedalus
 
     def library_group(path, &block)
       LibraryGroup.new(path, @compiler, &block)
+    end
+
+    def shared_library(name, *files)
+      lib = SharedLibTarget.new(name, files)
+      @programs << lib
+      lib
+    end
+
+    def static_library(name, *files)
+      lib = StaticLibTarget.new(name, files)
+      @programs << lib
+      lib
     end
 
     def gcc!

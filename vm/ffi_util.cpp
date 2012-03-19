@@ -17,15 +17,22 @@
 #include <math.h>
 
 #include "windows_compat.h"
+#ifdef __APPLE__
+#include <crt_externs.h>
+#endif
+
 #include "ffi_util.hpp"
 
 extern "C" {
 
+#ifdef __APPLE__
+char** ffi_environ() { return (*_NSGetEnviron()); }
+#else
 extern char** environ;
+char** ffi_environ() { return environ; }
+#endif
 
 int ffi_errno() { return errno; }
-
-char** ffi_environ() { return environ; }
 
 void ffi_set_errno(int n) {
   errno = n;

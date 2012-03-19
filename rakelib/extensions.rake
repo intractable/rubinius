@@ -200,5 +200,6 @@ compile_ext "dbm", :ignore_fail => true, :deps => ["Makefile"], :dir => "lib/dbm
 compile_ext "gdbm", :ignore_fail => true, :deps => ["Makefile"], :dir => "lib/gdbm/ext"
 compile_ext "sdbm", :deps => ["Makefile"], :dir => "lib/sdbm/ext"
 
-compile_ext "profiler", :dir => "lib/tooling/profiler",
-                        :deps => ["Makefile"]
+compile_ext "profiler", :dir => "lib/tooling/profiler", 
+                        :deps => ["Makefile"],
+                        :ignore_fail => true
