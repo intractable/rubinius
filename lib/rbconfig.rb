@@ -54,12 +54,6 @@ module RbConfig
   end
 
   CONFIG["LIBS"]               = ""
-  # TODO/FIXME: Check
-  # if RUBY_PLATFORM =~ /darwin/
-  #   # CONFIG["LIBS"]               = "-lcrypto"
-  # else
-  #   CONFIG["LIBS"]               = "-lrt -lcrypt"
-  # end
 
   sitedir                      = Rubinius::SITE_PATH
   sitelibdir                   = sitedir
@@ -128,11 +122,6 @@ module RbConfig
   # used by mkmf to compile extensions, be sure PIC is in
   # there
   CONFIG["CFLAGS"]             = "-ggdb3 -fPIC"
-  # TODO:FIXME: check
-  # if RUBY_PLATFORM =~ /darwin/
-  #   CONFIG["CFLAGS"] << " -DHAVE_BN_RAND_RANGE"
-  #   CONFIG["CFLAGS"] << " -DHAVE_BN_PSEUDO_RAND_RANGE"
-  # end
   CONFIG["LDFLAGS"]            = ""
   if ENV['DEV']
     CONFIG["CFLAGS"] << " -O0"
@@ -193,13 +182,13 @@ module RbConfig
   CONFIG["EXTOUT"]             = ".ext"
   CONFIG["ARCHFILE"]           = ""
   CONFIG["RDOCTARGET"]         = ""
-  CONFIG["LIBRUBY_A"]          = "librubinius.$(LIBEXT)"
-  CONFIG["LIBRUBY_SO"]         = "librubinius.$(DLEXT)"
+  CONFIG["LIBRUBY_A"]          = ""
+  CONFIG["LIBRUBY_SO"]         = "lib$(RUBY_SO_NAME).$(DLEXT)"
   CONFIG["LIBRUBY_ALIASES"]    = "lib$(RUBY_SO_NAME).$(DLEXT)"
-  CONFIG["LIBRUBY"]            = "$(LIBRUBY_A)"
+  CONFIG["LIBRUBY"]            = "$(LIBRUBY_SO)"
   CONFIG["LIBRUBYARG"]         = "$(LIBRUBYARG_STATIC)"
-  CONFIG["LIBRUBYARG_SHARED"] = ""
-  CONFIG["LIBRUBYARG_STATIC"] = ""
+  CONFIG["LIBRUBYARG_SHARED"]  = ""
+  CONFIG["LIBRUBYARG_STATIC"]  = ""
   CONFIG["configure_args"]     = ""
   CONFIG["ALLOCA"]             = ""
   CONFIG["LIBEXT"]             = "a"
