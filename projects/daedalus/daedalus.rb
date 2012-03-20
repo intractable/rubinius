@@ -273,10 +273,10 @@ module Daedalus
       @log.command "#{@linker} -o #{path} #{files.join(' ')} #{@libraries.join(' ')} #{@ldflags.join(' ')}"
     end
 
-    def ar(library, objects)
-      @log.show "AR", library
-      @log.command "ar rv #{library} #{objects.join(' ')}"
-      @log.command "ranlib #{library}"
+    def ar(library, objects, flags="rv", ranlib=true, log=true)
+      @log.show "AR", library if log
+      @log.command "ar #{flags} #{library} #{objects.join(' ')}"
+      @log.command "ranlib #{library}" if ranlib
     end
 
     def ldshared(library, objects)
@@ -829,7 +829,29 @@ module Daedalus
   class StaticLibTarget < Program
     def build(ctx)
       ctx.log.inc!
-      ctx.ar @path, objects
+      require 'fileutils'
+      dir = Dir.mktmpdir
+      files = objects.dup
+      files.each_with_index do |f,i|
+        if f.end_with? '.a'
+        then
+          archive = File.expand_path(f)
+          archdir = File.join(dir, File.basename(archive))
+          mkdir_p archdir
+          cd archdir do ctx.ar archive, [], "x", false, false end
+          files[i] = Dir.entries(archdir).find_all{ |f| f =~ /.*\.o$/ }
+
+          # Special-case hack: don't include the object file which corresponds
+          # to vendor/oniguruma/enc/mktable.c, as it defines _main.
+          files[i].reject! { |fn| fn == "mktable.c.o" } if File.basename(archive) == "libonig.a"
+
+          files[i].map! { |fn| '"' + File.join(archdir, fn) + '"' }
+        end
+      end
+      files.flatten!
+
+      ctx.ar @path, files
+      remove_entry_secure dir
     end
   end
 
