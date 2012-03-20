@@ -117,7 +117,7 @@ end
 
 # See vm.rake for more information
 desc "Build everything that needs to be built at default level."
-task :build => ["build:build", "gem_bootstrap"]
+task :build => ["build:build", "gem_bootstrap", "lib:static", "lib:shared"]
 
 desc "Recompile all ruby system files"
 task :rebuild => %w[clean build]
